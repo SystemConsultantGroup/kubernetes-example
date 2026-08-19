@@ -1,0 +1,14 @@
+{
+  "name": "kubernetes-example",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.19.0"
+  },
+  "packageManager": "pnpm@11.20.0",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node --test"
+  }
+}

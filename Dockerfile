@@ -2,10 +2,10 @@ FROM node:24.19.0-alpine
 
 WORKDIR /app
 
-COPY --chown=node:node package.json ./
-COPY --chown=node:node index.js ./
+COPY --chown=1000:1000 package.json ./
+COPY --chown=1000:1000 index.js ./
 
-USER node
+USER 1000:1000
 
 EXPOSE 8080
 

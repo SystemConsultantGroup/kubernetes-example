@@ -27,3 +27,5 @@ Images are published to GitHub Container Registry and deployed only by immutable
 digest. The workflow needs the `KUBERNETES_APP_ID` and
 `KUBERNETES_APP_PRIVATE_KEY` repository secrets to dispatch the restricted
 Kubernetes workflow.
+
+This pull request exercises the preview delivery lifecycle.

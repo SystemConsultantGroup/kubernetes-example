@@ -15,8 +15,15 @@ The service listens on port `8080` by default and exposes `/livez` and
 `PREVIEW_ONLY_VALUE` environment variables. Other process environment values
 are never included.
 
-## Container image
+## Container delivery
 
-The main-branch workflow tests the service and publishes an image to GitHub
-Container Registry. It emits the immutable image digest for use in the
-Kubernetes deployment lock.
+The container workflow tests each change and delegates image publication and
+instance updates to the reusable Kubernetes delivery workflow. A push to `main`
+updates production, a push to `testing` updates testing, and a same-repository
+pull request creates or updates its preview. Closing the pull request removes
+that preview.
+
+Images are published to GitHub Container Registry and deployed only by immutable
+digest. The workflow needs the `KUBERNETES_APP_ID` and
+`KUBERNETES_APP_PRIVATE_KEY` repository secrets to dispatch the restricted
+Kubernetes workflow.

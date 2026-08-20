@@ -18,9 +18,15 @@ are never included.
 ## Container delivery
 
 The container workflow delegates image publication and instance updates to the
-reusable Kubernetes delivery workflow. A push to `main` updates production, a
-push to `testing` updates testing, and a same-repository pull request creates or
-updates its preview. Closing the pull request removes that preview.
+reusable Kubernetes delivery workflow. The branch names have fixed meanings;
+their order in the workflow does not matter:
+
+- a push to `main` updates production;
+- a push to `testing` updates testing;
+- opening or updating a same-repository pull request updates its preview; and
+- closing the pull request removes its preview.
+
+Other pushed branches do not invoke the workflow.
 
 Images are published to GitHub Container Registry and deployed only by immutable
 digest. The workflow needs the `KUBERNETES_APP_ID` and

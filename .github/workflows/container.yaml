@@ -33,7 +33,7 @@ jobs:
   build-image:
     needs: test
     if: always() && (needs.test.result == 'success' || (github.event_name == 'pull_request' && github.event.action == 'closed'))
-    uses: SystemConsultantGroup/kubernetes/.github/workflows/build-image.yaml@7de58452e6a795d4dfcdb2817427a20ba3a3b8f6
+    uses: SystemConsultantGroup/kubernetes/.github/workflows/build-image.yaml@48908370b0458339e50c2bbac2de6bbd9e7b4dde
     with:
       application: example
       workload: fe

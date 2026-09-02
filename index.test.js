@@ -18,7 +18,7 @@ async function request(path, environment) {
   }
 }
 
-test("serves selected environment variables", async () => {
+test("serves selected environment variables as HTML", async () => {
   const response = await request("/", {
     EXAMPLE_MESSAGE: "testing",
     ENVIRONMENT: "preview",
@@ -31,33 +31,34 @@ test("serves selected environment variables", async () => {
   assert.equal(response.status, 200);
   assert.equal(
     response.headers.get("content-type"),
-    "application/json; charset=utf-8",
+    "text/html; charset=utf-8",
   );
-  assert.deepEqual(await response.json(), {
-    message: "testing",
-    variables: {
-      EXAMPLE_MESSAGE: "testing",
-      ENVIRONMENT: "preview",
-      INHERITED_VALUE: "from-testing",
-      OVERRIDDEN_VALUE: "from-preview",
-      PREVIEW_ONLY_VALUE: "preview-only",
-    },
-  });
+  const body = await response.text();
+  assert.match(body, /<h1>testing<\/h1>/);
+  assert.match(body, /<dt>ENVIRONMENT<\/dt><dd>preview<\/dd>/);
+  assert.match(body, /<dt>PREVIEW_ONLY_VALUE<\/dt><dd>preview-only<\/dd>/);
+  assert.doesNotMatch(body, /hidden/);
+  assert.match(body, /<\/body>/);
 });
 
 test("uses defaults for missing environment variables", async () => {
   const response = await request("/", {});
+  const body = await response.text();
 
-  assert.deepEqual(await response.json(), {
-    message: "Hello from Kubernetes!",
-    variables: {
-      EXAMPLE_MESSAGE: null,
-      ENVIRONMENT: null,
-      INHERITED_VALUE: null,
-      OVERRIDDEN_VALUE: null,
-      PREVIEW_ONLY_VALUE: null,
-    },
+  assert.match(body, /<h1>Hello from Kubernetes!<\/h1>/);
+  assert.match(body, /<dt>EXAMPLE_MESSAGE<\/dt><dd>unset<\/dd>/);
+  assert.match(body, /<dt>PREVIEW_ONLY_VALUE<\/dt><dd>unset<\/dd>/);
+});
+
+test("escapes environment variables for HTML", async () => {
+  const response = await request("/", {
+    EXAMPLE_MESSAGE: '<script>alert("unsafe")</script>',
   });
+
+  assert.equal(
+    await response.text().then((body) => body.includes("&lt;script&gt;")),
+    true,
+  );
 });
 
 test("serves health endpoints", async () => {

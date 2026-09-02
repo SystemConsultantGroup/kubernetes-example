@@ -8,6 +8,20 @@ const responseVariableNames = [
   "PREVIEW_ONLY_VALUE",
 ];
 
+function escapeHtml(value) {
+  return String(value).replace(
+    /[&<>\"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
+}
+
 export function createApplication(environment = process.env) {
   return createServer((request, response) => {
     const path = new URL(request.url, "http://localhost").pathname;
@@ -18,22 +32,33 @@ export function createApplication(environment = process.env) {
       return;
     }
 
-    const variables = Object.fromEntries(
-      responseVariableNames.map((name) => [name, environment[name] ?? null]),
-    );
-    const body = JSON.stringify(
-      {
-        message: environment.EXAMPLE_MESSAGE ?? "Hello from Kubernetes!",
-        variables,
-      },
-      null,
-      2,
-    );
+    const message = environment.EXAMPLE_MESSAGE ?? "Hello from Kubernetes!";
+    const variables = responseVariableNames.map((name) => {
+      const value = environment[name] ?? "unset";
+      return `<dt>${name}</dt><dd>${escapeHtml(value)}</dd>`;
+    });
+    const body = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kubernetes Example</title>
+  </head>
+  <body>
+    <main>
+      <h1>${escapeHtml(message)}</h1>
+      <dl>
+        ${variables.join("\n        ")}
+      </dl>
+    </main>
+  </body>
+</html>
+`;
 
     response.writeHead(200, {
-      "content-type": "application/json; charset=utf-8",
+      "content-type": "text/html; charset=utf-8",
     });
-    response.end(`${body}\n`);
+    response.end(body);
   });
 }
 

@@ -42,7 +42,7 @@ export function createApplication(environment = process.env) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Kubernetes Example</title>
+    <title>Kubernetes Test Example</title>
   </head>
   <body>
     <main>

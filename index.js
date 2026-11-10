@@ -32,7 +32,7 @@ export function createApplication(environment = process.env) {
       return;
     }
 
-    const message = environment.EXAMPLE_MESSAGE ?? "Hello from Kubernetes!";
+    const message = environment.EXAMPLE_MESSAGE ?? "Hello from badass Kubernetes!";
     const variables = responseVariableNames.map((name) => {
       const value = environment[name] ?? "unset";
       return `<dt>${name}</dt><dd>${escapeHtml(value)}</dd>`;
